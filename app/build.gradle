@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 29
@@ -32,4 +34,35 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "sonarqubedemo"
+        property "sonar.projectKey", "com.example.sonarqubedemo"
+
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.login", "c76b41dbaa85c54535a756075a23705524395a34"
+        property "sonar.language", "kotlin"
+        property "sonar.tests", ["src/test/java", "src/androidTest/java"]
+        property "sonar.test.inclusions", "**/*Test*/**"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.sources", "src/main/java"
+        property "sonar.exclusions", '**/*Test*/**,' +
+                '*.json,' +
+                '**/*test*/**,' +
+                '**/.gradle/**,' +
+                '**/R.class'
+
+//jacoco
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.jacoco.reportPath", "**/jacoco/*.exec"
+    }
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
 }
